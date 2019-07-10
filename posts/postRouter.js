@@ -16,8 +16,9 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:id', (req, res) => {
-
+router.get('/:id', validatePostId, (req, res) => {
+  const { post } = req.body
+  return res.status(200).json({ message: 'OK', post})
 });
 
 router.delete('/:id', (req, res) => {
@@ -37,7 +38,7 @@ async function validatePostId(req, res, next) {
   } else {
     const post = await Post.getById(id);
     if (post) {
-      req.post = post;
+      req.body.post = post;
       next()
     } else {
       next({statusCode: 400, message:"invalid post id"})
