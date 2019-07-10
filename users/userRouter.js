@@ -2,6 +2,7 @@ const express = require("express");
 
 const router = express.Router();
 const User = require("./userDb");
+const Post = require("../posts/postDb");
 
 router.post("/", validateUser, async (req, res, next) => {
   try {
@@ -17,7 +18,27 @@ router.post("/", validateUser, async (req, res, next) => {
   }
 });
 
-router.post("/:id/posts", validatePost, (req, res) => {});
+router.post(
+  "/:id/posts",
+  validateUserId,
+  validatePost,
+  async (req, res, next) => {
+    try {
+      const { text, user } = req.body;
+      const post = await Post.insert({
+        text,
+        user_id: user.id
+      });
+      if (post) {
+        return res.status(201).json({ status: "success", post });
+      } else {
+        next({ statusCode: 500, message: "Internal server" });
+      }
+    } catch (error) {
+      next({ statusCode: 500, message: "Internal server" });
+    }
+  }
+);
 
 router.get("/", (req, res) => {});
 
@@ -38,7 +59,7 @@ async function validateUserId(req, res, next) {
   } else {
     const user = await User.getById(id);
     if (user) {
-      req.user = user;
+      req.body.user = user;
       next();
     } else {
       next({ statusCode: 400, message: "invalid user id" });
