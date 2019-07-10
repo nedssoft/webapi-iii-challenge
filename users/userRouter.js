@@ -53,7 +53,10 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", validateUserId, (req, res) => {});
+router.get("/:id", validateUserId, async (req, res) => {
+  const { user } = req.body
+  return res.status(200).json({message: 'OK', user})
+});
 
 router.get("/:id/posts", (req, res) => {});
 
