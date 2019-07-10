@@ -53,12 +53,25 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.get("/:id", validateUserId, async (req, res) => {
+router.get("/:id", validateUserId, (req, res) => {
   const { user } = req.body
   return res.status(200).json({message: 'OK', user})
 });
 
-router.get("/:id/posts", (req, res) => {});
+router.get("/:id/posts", validateUserId, async (req, res, next) => {
+  try {
+    const { user } = req.body
+    const posts = await User.getUserPosts(user.id);
+    if (posts.length) {
+      return res.status(200).json({message: 'OK', posts})
+    } else {
+      next({statusCode: 400, message: 'No post found for user with the specified ID'})
+    }
+  } catch (error) {
+    console.log(error)
+    next({statusCode: 500})
+  }
+});
 
 router.delete("/:id", (req, res) => {});
 

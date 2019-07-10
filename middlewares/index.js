@@ -13,7 +13,6 @@ async function validateUserId(req, res, next) {
     const user = User.getById(id);
     if (user) {
       req.user = user;
-      // console.log(user)
       next()
     } else {
       next({statusCode: 400, message:"invalid user id" })
@@ -27,7 +26,7 @@ function errorHandler(error, req, res, next) {
     if (statusCode === 500) {
       return res.status(statusCode).json({
         message : 'Internal server error',
-        ...( rest && { rest })
+        ...( rest && rest )
       })
     } else {
       return res.status(statusCode).json({
