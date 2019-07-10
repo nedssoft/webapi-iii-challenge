@@ -21,7 +21,7 @@ router.put('/:id', (req, res) => {
 
 // custom middleware
 
-function validatePostId(req, res, next) {
+async function validatePostId(req, res, next) {
   const { id } = req.params;
   if(!id || !Number(id)) {
     next({statusCode: 400, message:"invalid post id" })
@@ -36,4 +36,7 @@ function validatePostId(req, res, next) {
   }
 };
 
-module.exports = router;
+module.exports = {
+  router,
+  validatePostId
+}

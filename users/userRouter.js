@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const User = require("./userDb");
 const Post = require("../posts/postDb");
+const { validatePostId } = require('../posts/postRouter')
 
 router.post("/", validateUser, async (req, res, next) => {
   try {
@@ -73,7 +74,19 @@ router.get("/:id/posts", validateUserId, async (req, res, next) => {
   }
 });
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", validateUserId, async(req, res, next) => {
+  try {
+    const { user } = req.body;
+    const deleted = await User.remove(user.id);
+    if (deleted) {
+      return res.status(200).json({ message: "User deleted"})
+    } else {
+       next({statusCode: 500})
+    }
+  } catch (error) {
+    next({statusCode: 500})
+  }
+});
 
 router.put("/:id", (req, res) => {});
 
