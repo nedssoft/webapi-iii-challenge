@@ -3,8 +3,17 @@ const express = require('express');
 const Post = require('./postDb')
 const router = express.Router();
 
-router.get('/', (req, res) => {
-
+router.get('/', async (req, res, next) => {
+  try {
+    const posts = await Post.get()
+    if (posts.length) {
+      return res.status(200).json({ message: 'Ok', posts})
+    } else {
+      next({statusCode: 500})
+    }
+  } catch (error) {
+    next({statusCode: 500})
+  }
 });
 
 router.get('/:id', (req, res) => {
@@ -37,6 +46,5 @@ async function validatePostId(req, res, next) {
 };
 
 module.exports = {
-  router,
-  validatePostId
+  router
 }

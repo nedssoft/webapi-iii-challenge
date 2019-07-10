@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const User = require("./userDb");
 const Post = require("../posts/postDb");
-const { validatePostId } = require('../posts/postRouter')
 
 router.post("/", validateUser, async (req, res, next) => {
   try {
