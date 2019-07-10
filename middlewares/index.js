@@ -24,12 +24,18 @@ async function validateUserId(req, res, next) {
 function errorHandler(error, req, res, next) {
   if (error) {
     const { statusCode, message, ...rest} = error
-    return res.status(statusCode).json({
-      message,
-      ...( rest && rest)
-    })
+    if (statusCode === 500) {
+      return res.status(statusCode).json({
+        message : 'Internal server error',
+        ...( rest && { rest })
+      })
+    } else {
+      return res.status(statusCode).json({
+        message,
+        ...( rest && rest)
+      })
+    }
   }
-  console.log('yess!')
   next()
 }
 

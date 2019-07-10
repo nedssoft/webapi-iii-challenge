@@ -11,10 +11,10 @@ router.post("/", validateUser, async (req, res, next) => {
     if (user) {
       return res.status(201).json({ status: "success", user });
     } else {
-      next({ statusCode: 500, message: "Internal server" });
+      next({ statusCode: 500});
     }
   } catch (error) {
-    next({ statusCode: 500, message: "Internal server" });
+    next({ statusCode: 500});
   }
 });
 
@@ -32,15 +32,26 @@ router.post(
       if (post) {
         return res.status(201).json({ status: "success", post });
       } else {
-        next({ statusCode: 500, message: "Internal server" });
+        next({ statusCode: 500 });
       }
     } catch (error) {
-      next({ statusCode: 500, message: "Internal server" });
+      next({ statusCode: 500});
     }
   }
 );
 
-router.get("/", (req, res) => {});
+router.get("/", async (req, res, next) => {
+  try {
+    const users = await User.get();
+    if (users) {
+      return res.status(200).json({ message: 'OK', users })
+    } else {
+      next({statusCode: 404, message: 'No user data found'})
+    }
+  } catch (error) {
+    next({statusCode: 500})
+  }
+});
 
 router.get("/:id", validateUserId, (req, res) => {});
 
@@ -78,7 +89,7 @@ function validateUser(req, res, next) {
       next();
     }
   } catch (error) {
-    next({ statusCode: 500, message: "Internal server error" });
+    next({ statusCode: 500});
   }
 }
 
@@ -93,7 +104,7 @@ function validatePost(req, res, next) {
       next();
     }
   } catch (error) {
-    next({ statusCode: 500, message: "Internal server error" });
+    next({ statusCode: 500 });
   }
 }
 
