@@ -7,7 +7,7 @@ router.post('/', validateUser, (req, res) => {
 
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validatePost, (req, res) => {
 
 });
 
@@ -48,8 +48,7 @@ async function validateUserId(req, res, next) {
   }
 }
 
-async function validateUser(req, res, next) {
-
+function validateUser(req, res, next) {
   try {
     const { body } = req;
     if (!body) {
@@ -65,7 +64,18 @@ async function validateUser(req, res, next) {
 };
 
 function validatePost(req, res, next) {
-
+  try {
+    const { body } = req;
+    if (!body) {
+      next({statusCode: 400, message: 'missing post data'});
+    } else if (!body.text) {
+      next({statusCode: 400, message: 'missing required text field'});
+    } else {
+      next()
+    }
+  } catch (error) {
+    next({statusCode: 500, message: 'Internal server error'});
+  }
 };
 
 module.exports = router;
