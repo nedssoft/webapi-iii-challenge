@@ -35,8 +35,23 @@ router.delete('/:id', validatePostId, async (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
-
+router.put('/:id',  validatePostId, async (req, res, next) => {
+ try {
+   const { id } = req.params
+   const { text, post } = req.body
+   if (!text ) {
+     next({statusCode: 400, message: 'missing requires text field'})
+   }  else {
+       const updated = await Post.update(id, { text, user_id: post.user_id})
+       if (updated) {
+         return res.status(200).json({message: 'Post updated successfully'})
+       } else {
+        next({statusCode: 500})
+       }
+     }
+ } catch (error) {
+  next({statusCode: 500})
+ }
 });
 
 // custom middleware
