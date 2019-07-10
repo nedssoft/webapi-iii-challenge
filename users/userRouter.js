@@ -88,7 +88,19 @@ router.delete("/:id", validateUserId, async(req, res, next) => {
   }
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", validateUserId, validateUser, async(req, res) => {
+  try {
+    const { name, user } = req.body;
+    const updated = await User.update(user.id, { name });
+    if (updated) {
+      res.status(200).json({ message: 'User information updated'})
+    } else {
+      next({statusCode: 500})
+    }
+  } catch (error) {
+    next({statusCode: 500})
+  }
+});
 
 //custom middleware
 
