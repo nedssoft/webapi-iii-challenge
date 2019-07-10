@@ -21,8 +21,18 @@ router.get('/:id', validatePostId, (req, res) => {
   return res.status(200).json({ message: 'OK', post})
 });
 
-router.delete('/:id', (req, res) => {
-
+router.delete('/:id', validatePostId, async (req, res) => {
+  try {
+    const { id } = req.params
+    const deleted = await Post.remove(id);
+    if (deleted) {
+      return res.status(200).json({ message: "Post deleted"})
+    } else {
+       next({statusCode: 500})
+    }
+  } catch (error) {
+    next({statusCode: 500})
+  }
 });
 
 router.put('/:id', (req, res) => {
